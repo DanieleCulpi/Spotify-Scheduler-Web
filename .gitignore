@@ -1,0 +1,13 @@
+.env
+.cache
+schedule.txt
+schedule.json
+config.json
+output_log.txt
+__pycache__/
+output/
+spotify-scheduler_data/
+build/
+dist/
+*.bak
+.venv

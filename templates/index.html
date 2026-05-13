@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Daniele's Spotify Scheduler - Schedule your Spotify playlists">
+    <title>Daniele's Scheduler v{{ ver }}</title>
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">♫</div>
+            <span class="brand-text">Scheduler</span>
+            <span class="brand-ver">v{{ ver }}</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#" class="nav-link active" data-page="now-playing"><span class="nav-icon">▶</span>Now
+                    Playing</a></li>
+            <li><a href="#" class="nav-link" data-page="schedule"><span class="nav-icon">📅</span>Schedule</a></li>
+            <li><a href="#" class="nav-link" data-page="recently-played"><span class="nav-icon">🕐</span>Recently
+                    Played</a></li>
+            <li><a href="#" class="nav-link" data-page="import-export"><span class="nav-icon">📦</span>Import/Export</a>
+            </li>
+            <li><a href="#" class="nav-link" data-page="settings"><span class="nav-icon">⚙</span>Settings</a></li>
+            <li><a href="#" class="nav-link" data-page="console"><span class="nav-icon">🖥</span>Console</a></li>
+            <li><a href="#" class="nav-link" data-page="about"><span class="nav-icon">ℹ</span>About</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Status Bar -->
+        <header id="status-bar">
+            <div class="status-left">
+                <button id="btn-toggle-pause" class="btn btn-accent" onclick="togglePause()">Pause Automation</button>
+                <span id="status-text" class="status-text"></span>
+            </div>
+            <div class="status-right">
+                <span id="status-user" class="status-user"></span>
+                <span id="status-time" class="status-time"></span>
+            </div>
+        </header>
+
+        <!-- Now Playing Page -->
+        <section id="page-now-playing" class="page active">
+            <div class="page-inner">
+                <div class="now-playing-card">
+                    <div id="np-cover-wrap" class="np-cover-wrap">
+                        <img id="np-cover" class="np-cover" src="" alt="Album Cover" style="display:none">
+                        <div id="np-no-cover" class="np-no-cover">♫</div>
+                    </div>
+                    <div class="np-info">
+                        <div id="np-title" class="np-title">Loading...</div>
+                        <div id="np-artist" class="np-artist"></div>
+                        <div id="np-playlist" class="np-detail"></div>
+                        <div id="np-device" class="np-detail"></div>
+                        <div class="np-state-row">
+                            <span id="np-state" class="np-state-badge"></span>
+                            <span id="np-slot" class="np-detail"></span>
+                        </div>
+                    </div>
+                </div>
+                <div id="np-checklist" class="checklist-card">
+                    <h3>Checklist</h3>
+                    <div id="checklist-content"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Schedule Page -->
+        <section id="page-schedule" class="page">
+            <div class="page-inner schedule-layout">
+                <div class="calendar-panel">
+                    <div class="calendar-widget" id="calendar-widget"></div>
+                    <div class="calendar-actions">
+                        <button class="btn btn-sm" onclick="copyDaysDialog()">Copy X days</button>
+                        <button class="btn btn-sm" onclick="copyWeekdaysDialog()">Copy X weekdays</button>
+                    </div>
+                </div>
+                <div class="schedule-panel">
+                    <div class="schedule-header-row">
+                        <span class="sh-col sh-start">Start</span>
+                        <span class="sh-col sh-end">End</span>
+                        <span class="sh-col sh-edit"></span>
+                        <span class="sh-col sh-playlist">Playlist</span>
+                        <span class="sh-col sh-rq">Random<br>Queue</span>
+                        <span class="sh-col sh-del"></span>
+                    </div>
+                    <div id="schedule-entries" class="schedule-entries"></div>
+                    <div class="schedule-add-row">
+                        <input type="text" id="add-start" class="input-sm" placeholder="HH:MM">
+                        <input type="text" id="add-end" class="input-sm" placeholder="HH:MM">
+                        <button class="btn btn-accent btn-sm" onclick="addEntry()">+ Add</button>
+                    </div>
+                    <div id="schedule-status" class="schedule-status"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recently Played Page -->
+        <section id="page-recently-played" class="page">
+            <div class="page-inner">
+                <div class="section-header">
+                    <h2>Recently Played</h2>
+                    <button class="btn btn-sm" onclick="loadRecentlyPlayed()">↻ Refresh</button>
+                </div>
+                <div id="rp-status" class="sub-status"></div>
+                <table class="data-table" id="rp-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Title</th>
+                            <th>Artist</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rp-body"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Import/Export Page -->
+        <section id="page-import-export" class="page">
+            <div class="page-inner">
+                <h2>Import / Export Playlists</h2>
+                <p class="page-desc">Export playlists as JSON files for backup or sharing. Import previously exported
+                    playlists into your Spotify account.</p>
+                <div class="ie-buttons">
+                    <div class="ie-card" id="ie-export-card">
+                        <h3>📤 Export</h3>
+                        <p>Select a playlist and download as JSON.</p>
+                        <select id="export-playlist-select" class="select-input">
+                            <option value="">Loading...</option>
+                        </select>
+                        <input type="text" id="export-playlist-id" class="input-field"
+                            placeholder="Or paste playlist URL/ID">
+                        <button class="btn btn-accent" onclick="exportPlaylist()">Export</button>
+                        <div id="export-status" class="sub-status"></div>
+                    </div>
+                    <div class="ie-card" id="ie-import-card">
+                        <h3>📥 Import</h3>
+                        <p>Upload a previously exported JSON file.</p>
+                        <input type="file" id="import-file" accept=".json" class="file-input">
+                        <input type="text" id="import-name" class="input-field" placeholder="Playlist name (optional)">
+                        <button class="btn btn-accent" onclick="importPlaylist()">Import</button>
+                        <div id="import-status" class="sub-status"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Page -->
+        <section id="page-settings" class="page">
+            <div class="page-inner">
+                <h2>Settings</h2>
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label>Language</label>
+                        <select id="set-lang" class="select-input">
+                            <option value="en">English</option>
+                            <option value="pl">Polski</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Client ID</label>
+                        <input type="text" id="set-client-id" class="input-field" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label>Client Secret</label>
+                        <input type="password" id="set-client-secret" class="input-field" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label>Device Name</label>
+                        <div class="input-with-btn">
+                            <input type="text" id="set-device" class="input-field">
+                            <button class="btn btn-sm" onclick="chooseDevice()">Choose</button>
+                        </div>
+                    </div>
+                    <div class="form-group-row">
+                        <label class="checkbox-label"><input type="checkbox" id="set-weekdays"> Play on weekdays
+                            only</label>
+                        <label class="checkbox-label"><input type="checkbox" id="set-skip-explicit"> Skip explicit
+                            tracks</label>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-accent" onclick="saveSettings()">Save Settings</button>
+                        <button class="btn btn-danger" onclick="logoutSpotify()">Logout (delete cache)</button>
+                    </div>
+                    <div id="settings-status" class="sub-status"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Console Page -->
+        <section id="page-console" class="page">
+            <div class="page-inner">
+                <div class="section-header">
+                    <h2>Console</h2>
+                    <button class="btn btn-sm" onclick="loadConsole()">↻ Refresh</button>
+                </div>
+                <pre id="console-output" class="console-output"></pre>
+            </div>
+        </section>
+
+        <!-- About Page -->
+        <section id="page-about" class="page">
+            <div class="page-inner about-page">
+                <div class="about-icon">♫</div>
+                <h1>Daniele's Spotify Scheduler</h1>
+                <p class="about-ver">Version {{ ver }}</p>
+                <p class="about-author">Author: Daniele</p>
+                <p class="about-note">Thank you for using my app!</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Playlist Selection Modal -->
+    <div id="modal-overlay" class="modal-overlay" style="display:none" onclick="closeModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 id="modal-title">Select Playlist</h3>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="modal-playlist-list" class="modal-list"></div>
+                <div class="modal-input-row">
+                    <input type="text" id="modal-playlist-input" class="input-field"
+                        placeholder="Or paste playlist URL/ID">
+                    <button class="btn btn-accent btn-sm" id="modal-select-btn">Select</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copy Dialog Modal -->
+    <div id="modal-copy" class="modal-overlay" style="display:none" onclick="closeCopyModal()">
+        <div class="modal modal-sm" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 id="copy-title">Copy Schedule</h3>
+                <button class="modal-close" onclick="closeCopyModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <p id="copy-desc"></p>
+                <div class="modal-input-row">
+                    <input type="number" id="copy-count" class="input-sm" min="1" max="999" placeholder="Number">
+                    <span id="copy-label">days ahead</span>
+                </div>
+                <div id="copy-preview" class="sub-status"></div>
+                <button class="btn btn-accent" id="copy-confirm-btn">Copy</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Device Selection Modal -->
+    <div id="modal-device" class="modal-overlay" style="display:none" onclick="closeDeviceModal()">
+        <div class="modal modal-sm" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Select Device</h3>
+                <button class="modal-close" onclick="closeDeviceModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="device-list" class="modal-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mandatory Setup Modal -->
+    <div id="modal-setup" class="modal-overlay" style="display:none">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Spotify Setup Required</h3>
+            </div>
+            <div class="modal-body">
+                <p style="font-size:13px; color:var(--fg2); margin-bottom:8px">Please enter your Spotify Developer
+                    credentials to continue. You can get them from the <a href="https://developer.spotify.com/dashboard"
+                        target="_blank">Spotify Dashboard</a>.</p>
+                <div class="form-group">
+                    <label>Client ID</label>
+                    <input type="text" id="setup-client-id" class="input-field" placeholder="Paste Client ID here"
+                        autocomplete="off">
+                </div>
+                <div class="form-group" style="margin-top:12px">
+                    <label>Client Secret</label>
+                    <input type="password" id="setup-client-secret" class="input-field"
+                        placeholder="Paste Client Secret here" autocomplete="off">
+                </div>
+                <button class="btn btn-accent" style="width:100%; margin-top:20px; padding:12px"
+                    onclick="saveSetupSettings()">Save and Continue</button>
+                <div id="setup-status" class="sub-status" style="text-align:center"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+
+</html>
