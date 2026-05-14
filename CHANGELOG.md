@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.0.0
+### Added:
+- **Interactive Setup Stepper**: Replaced the static setup guide with a multi-step interactive stepper for a smoother onboarding experience.
+- **Enhanced Homepage Checklist**: Real-time status checks for Spotify running status, device matching, and volume level (>0%).
+- **Visual Improvements**: Added icons and animations to the setup process and status indicators.
+
 ## 3.0.0
 ### Added:
 - **Web Migration**: Completely refactored the application to use a modern Web-based architecture (Flask).

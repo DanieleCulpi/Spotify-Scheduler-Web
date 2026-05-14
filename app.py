@@ -12,7 +12,7 @@ from translations import translations
 from packaging import version
 
 # ── Config ────────────────────────────────────────────────────────────────────
-VER = "3.0.0"
+VER = "4.0.0"
 CONFIG_FILE = "config.json"
 SCHEDULE_FILE = "schedule.json"
 
