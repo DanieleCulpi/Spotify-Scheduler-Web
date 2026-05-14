@@ -12,7 +12,7 @@ from translations import translations
 from packaging import version
 
 # ── Config ────────────────────────────────────────────────────────────────────
-VER = "4.0.0"
+VER = "4.0"
 CONFIG_FILE = "config.json"
 SCHEDULE_FILE = "schedule.json"
 
@@ -651,7 +651,7 @@ def api_import():
         name = d.get("name") or d["metadata"].get("original_name") or "Imported Playlist"
         uid = sp.me()['id']
         np = sp.current_user_playlist_create(name=name, public=False,
-             description=f"Imported by Spotify Scheduler v{VER} on {datetime.now()}")
+             description=f"Imported by Spotify Scheduler v4.0 on {datetime.now()}")
         uris = [t['uri'] for t in tracks if 'uri' in t]
         for i in range(0, len(uris), 100):
             sp.playlist_add_items(np['id'], uris[i:i+100])

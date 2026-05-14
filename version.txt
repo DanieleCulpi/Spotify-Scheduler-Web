@@ -36,7 +36,7 @@ StringFileInfo(
     StringStruct(u'LegalCopyright', u'MIT License - (c) 2026 Daniele Culpi'),
     StringStruct(u'OriginalFilename', u'spotify-scheduler.exe'),
     StringStruct(u'ProductName', u'Spotify Scheduler'),
-    StringStruct(u'ProductVersion', u'4.0.0')])
+    StringStruct(u'ProductVersion', u'4.0')])
   ]),
 VarFileInfo([VarStruct(u'Translation', [1033, 1200])]) 
   ]
