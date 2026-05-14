@@ -356,6 +356,38 @@ def api_now_playing():
                 if "web player" not in d.get("name","").lower():
                     dev_list.append({"name": d["name"], "active": d.get("is_active", False)})
                 if d.get("is_active"): dev_name = d["name"]
+        
+        # Checklist logic
+        checklist = []
+        # 1. Spotify is running
+        is_running = any("web player" not in d.get("name", "").lower() for d in devs.get("devices", [])) if devs else False
+        checklist.append({
+            "label": _("Spotify Running") if is_running else _("Spotify Is Turned Off"),
+            "status": is_running
+        })
+        
+        # 2. Device match
+        target_name = config.get('DEVICE_NAME', '')
+        device_found = any(d.get("name", "").lower() == target_name.lower() for d in devs.get("devices", [])) if devs else False
+        checklist.append({
+            "label": _("Device Found", device_name=target_name) if device_found else _("Device Not Found"),
+            "status": device_found
+        })
+        
+        # 3. Volume > 0%
+        vol_ok = False
+        curr_vol = 0
+        if device_found:
+            for d in devs.get("devices", []):
+                if d.get("name", "").lower() == target_name.lower():
+                    curr_vol = d.get("volume_percent", 0)
+                    vol_ok = curr_vol > 0
+                    break
+        checklist.append({
+            "label": _("Volume OK", volume=curr_vol) if vol_ok else _("Volume Increase", volume=curr_vol),
+            "status": vol_ok
+        })
+
         if cp and cp.get("item"):
             t = cp["item"]
             album_img = ""
@@ -373,9 +405,9 @@ def api_now_playing():
             return jsonify({"playing": True, "is_playing": cp.get("is_playing", False),
                 "title": t["name"], "artist": t["artists"][0]["name"],
                 "album_image": album_img, "playlist": pl_name,
-                "device": dev_name, "devices": dev_list,
+                "device": dev_name, "devices": dev_list, "checklist": checklist,
                 "time_slot": last_schedule, "state": _("Playing") if cp.get("is_playing") else _("Paused")})
-        return jsonify({"playing": False, "message": _("no_playback"), "devices": dev_list, "device": dev_name})
+        return jsonify({"playing": False, "message": _("no_playback"), "devices": dev_list, "device": dev_name, "checklist": checklist})
     except Exception as e:
         return jsonify({"error": str(e)})
 

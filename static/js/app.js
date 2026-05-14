@@ -69,8 +69,8 @@ async function loadNowPlaying() {
         else { cover.style.display = 'none'; noCover.style.display = 'flex'; }
         // Checklist
         let cl = '';
-        if (d.devices && d.devices.length > 0) {
-            cl += d.devices.map(dev => `${dev.active ? '✅' : '•'} ${dev.name}`).join('<br>');
+        if (d.checklist && d.checklist.length > 0) {
+            cl = d.checklist.map(item => item.label).join('<br>');
         }
         document.getElementById('checklist-content').innerHTML = cl;
     } else {
@@ -83,8 +83,8 @@ async function loadNowPlaying() {
         document.getElementById('np-state').className = 'np-state-badge';
         cover.style.display = 'none'; noCover.style.display = 'flex';
         let cl = '';
-        if (d.devices && d.devices.length > 0) {
-            cl += d.devices.map(dev => `${dev.active ? '✅' : '•'} ${dev.name}`).join('<br>');
+        if (d.checklist && d.checklist.length > 0) {
+            cl = d.checklist.map(item => item.label).join('<br>');
         }
         document.getElementById('checklist-content').innerHTML = cl || 'No devices found';
     }
@@ -410,6 +410,32 @@ function pickDevice(name) {
 function closeDeviceModal() { document.getElementById('modal-device').style.display = 'none'; }
 
 // ── Setup Logic ──────────────────────────────────────────────────────────────
+let currentSetupStep = 1;
+
+function changeSetupStep(dir) {
+    const newStep = currentSetupStep + dir;
+    if (newStep < 1 || newStep > 4) return;
+    
+    // Hide all steps
+    document.querySelectorAll('.setup-step-page').forEach(p => p.classList.remove('active'));
+    
+    // Show current step
+    document.getElementById(`setup-step-${newStep}`).classList.add('active');
+    currentSetupStep = newStep;
+    
+    // Update footer
+    document.getElementById('setup-current-step').textContent = newStep;
+    document.getElementById('btn-setup-prev').style.visibility = newStep === 1 ? 'hidden' : 'visible';
+    
+    if (newStep === 4) {
+        document.getElementById('btn-setup-next').style.display = 'none';
+        document.getElementById('btn-setup-save').style.display = 'block';
+    } else {
+        document.getElementById('btn-setup-next').style.display = 'block';
+        document.getElementById('btn-setup-save').style.display = 'none';
+    }
+}
+
 async function checkCredentials() {
     const d = await api('/api/settings');
     if (d.error) return true; // Should not happen often

@@ -276,22 +276,45 @@
             <div class="modal-header">
                 <h3>Spotify Setup Required</h3>
             </div>
-            <div class="modal-body">
-                <p style="font-size:13px; color:var(--fg2); margin-bottom:8px">Please enter your Spotify Developer
-                    credentials to continue. You can get them from the <a href="https://developer.spotify.com/dashboard"
-                        target="_blank">Spotify Dashboard</a>.</p>
-                <div class="form-group">
-                    <label>Client ID</label>
-                    <input type="text" id="setup-client-id" class="input-field" placeholder="Paste Client ID here"
-                        autocomplete="off">
+            <div class="modal-body setup-stepper">
+                <div id="setup-step-1" class="setup-step-page active">
+                    <div class="step-illustration">🌍</div>
+                    <h3>Step 1: Dashboard</h3>
+                    <p>Go to the <a href="https://developer.spotify.com/dashboard" target="_blank">Spotify Developer Dashboard</a> and log in with your Spotify account.</p>
                 </div>
-                <div class="form-group" style="margin-top:12px">
-                    <label>Client Secret</label>
-                    <input type="password" id="setup-client-secret" class="input-field"
-                        placeholder="Paste Client Secret here" autocomplete="off">
+                <div id="setup-step-2" class="setup-step-page">
+                    <div class="step-illustration">➕</div>
+                    <h3>Step 2: Create App</h3>
+                    <p>Click the <b>Create App</b> button. Give your app a name and description (anything you like).</p>
                 </div>
-                <button class="btn btn-accent" style="width:100%; margin-top:20px; padding:12px"
-                    onclick="saveSetupSettings()">Save and Continue</button>
+                <div id="setup-step-3" class="setup-step-page">
+                    <div class="step-illustration">⚙️</div>
+                    <h3>Step 3: Configuration</h3>
+                    <p>In your app settings, add this <b>Redirect URI</b>:<br><code class="copy-code">http://127.0.0.1:5000/callback</code></p>
+                    <p>Ensure the <b>Web API</b> checkbox is selected and click <b>Save</b>.</p>
+                </div>
+                <div id="setup-step-4" class="setup-step-page">
+                    <div class="step-illustration">🔑</div>
+                    <h3>Step 4: Credentials</h3>
+                    <p>Copy your <b>Client ID</b> and <b>Client Secret</b> from the dashboard and paste them below:</p>
+                    <div class="form-group" style="text-align:left; width:100%">
+                        <label>Client ID</label>
+                        <input type="text" id="setup-client-id" class="input-field" placeholder="Paste Client ID here" autocomplete="off">
+                    </div>
+                    <div class="form-group" style="text-align:left; width:100%; margin-top:12px">
+                        <label>Client Secret</label>
+                        <input type="password" id="setup-client-secret" class="input-field" placeholder="Paste Client Secret here" autocomplete="off">
+                    </div>
+                </div>
+                
+                <div class="setup-footer">
+                    <div class="setup-progress">Step <span id="setup-current-step">1</span> of 4</div>
+                    <div class="setup-actions">
+                        <button class="btn" id="btn-setup-prev" style="visibility:hidden" onclick="changeSetupStep(-1)">Back</button>
+                        <button class="btn btn-accent" id="btn-setup-next" onclick="changeSetupStep(1)">Next</button>
+                        <button class="btn btn-accent" id="btn-setup-save" style="display:none" onclick="saveSetupSettings()">Save and Continue</button>
+                    </div>
+                </div>
                 <div id="setup-status" class="sub-status" style="text-align:center"></div>
             </div>
         </div>

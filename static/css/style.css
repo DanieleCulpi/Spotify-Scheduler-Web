@@ -166,3 +166,72 @@ a{color:var(--accent);text-decoration:none}
 .modal-list-item.selected:nth-child(even){background:var(--accent)}
 .modal-input-row{display:flex;gap:8px;align-items:center}
 .modal-input-row .input-field{flex:1}
+
+/* ── Setup Stepper ─────────────────────────────────────────────────────────── */
+.setup-stepper {
+    padding: 32px;
+    text-align: center;
+    min-height: 440px;
+    display: flex;
+    flex-direction: column;
+}
+.setup-step-page {
+    display: none;
+    flex: 1;
+    animation: setupFadeIn 0.3s ease;
+}
+.setup-step-page.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.step-illustration {
+    font-size: 64px;
+    margin-bottom: 24px;
+    filter: drop-shadow(0 0 10px var(--accent-glow));
+}
+.setup-step-page h3 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--fg);
+}
+.setup-step-page p {
+    color: var(--fg2);
+    font-size: 14px;
+    line-height: 1.6;
+    max-width: 360px;
+    margin-bottom: 20px;
+}
+.copy-code {
+    background: var(--surface2);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: monospace;
+    color: var(--accent);
+    display: inline-block;
+    margin-top: 4px;
+    border: 1px solid var(--border);
+}
+.setup-footer {
+    margin-top: auto;
+    padding-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--border);
+}
+.setup-progress {
+    font-size: 12px;
+    color: var(--fg3);
+    font-weight: 500;
+}
+.setup-actions {
+    display: flex;
+    gap: 12px;
+}
+@keyframes setupFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
